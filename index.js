@@ -1,20 +1,26 @@
 const xray = require('x-ray')();
+const staff = require('staff');
 
 const mainUrl = "https://seattle.craigslist.org/search/cta";
 
 
 
-watchAds(mainUrl, 300000);
+// watchAds(mainUrl);
+
+console.log(findMatches("audi 2005", ["audi", "audi 2005", "not a match"]));
 
 
 // Watch Ads and Alert on Update
-function watchAds(urlToWatch, durationInMilli) {
+function watchAds(urlToWatch, termToWatchFor) {
 
   // Get Original List of Ads to Compare against
   getCurrentAdList(urlToWatch).then(function(originalAds) {
+
+  	console.log(findMatches('audi', originalAds));
+
     // Check for updated every 30 seconds
     setInterval(function() {
-    	console.log('Checked');
+      console.log('Checked');
 
       // Scrap Craigslist
       getCurrentAdList(urlToWatch).then(function(updatedAds) {
@@ -27,7 +33,7 @@ function watchAds(urlToWatch, durationInMilli) {
       });
     }, 3000);
   }, function(err) {
-  	console.log(err);
+    console.log(err);
   });
 }
 
@@ -41,6 +47,32 @@ function getCurrentAdList(url) {
     });
   });
 };
+
+
+function findMatches(term, adsToCheck) {
+  // Ads with matching terms
+  var matchesToReturn = [];
+  // Split terms at spaces
+  var termsArray = term.split(' ');
+  // Hashmap
+  var help = {};
+  // Assign each term to hash
+  termsArray.forEach((el, index) => {
+    help[el] = true;
+  });
+  // Iterate through ads and check for matches
+  adsToCheck.forEach((el, index) => {
+    el.split(' ').forEach((termWord, termIndex) => {
+    	// Check hashmap for match
+    	if(help.hasOwnProperty(termWord)) {
+    		// Push term into return array
+    		matchesToReturn.push(el);
+    	}
+    });
+  });
+  // Remove duplicates and array containing matches
+  return staff.removeDuplicates(matchesToReturn);
+}
 
 // Cancels the watch
 function cancelWatchAds(delayInMilli, setIntervalToCancel) {
