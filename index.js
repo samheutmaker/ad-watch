@@ -5,9 +5,8 @@ const mainUrl = "https://seattle.craigslist.org/search/cta";
 
 
 
-// watchAds(mainUrl);
+watchAds(mainUrl);
 
-console.log(findMatches("audi 2005", ["audi", "audi 2005", "not a match"]));
 
 
 // Watch Ads and Alert on Update
@@ -15,6 +14,7 @@ function watchAds(urlToWatch, termToWatchFor) {
 
   // Get Original List of Ads to Compare against
   getCurrentAdList(urlToWatch).then(function(originalAds) {
+
 
   	console.log(findMatches('audi', originalAds));
 
@@ -49,6 +49,7 @@ function getCurrentAdList(url) {
 };
 
 
+// Find and return matches
 function findMatches(term, adsToCheck) {
   // Ads with matching terms
   var matchesToReturn = [];
@@ -58,13 +59,14 @@ function findMatches(term, adsToCheck) {
   var help = {};
   // Assign each term to hash
   termsArray.forEach((el, index) => {
+  	el = el.toLowerCase();
     help[el] = true;
   });
   // Iterate through ads and check for matches
   adsToCheck.forEach((el, index) => {
     el.split(' ').forEach((termWord, termIndex) => {
     	// Check hashmap for match
-    	if(help.hasOwnProperty(termWord)) {
+    	if(help.hasOwnProperty(termWord.toLowerCase())) {
     		// Push term into return array
     		matchesToReturn.push(el);
     	}
