@@ -4,10 +4,8 @@ const staff = require('staff');
 const mainUrl = "https://seattle.craigslist.org/search/cta";
 
 
-
+// Initalize
 watchAds(mainUrl);
-
-
 
 // Watch Ads and Alert on Update
 function watchAds(urlToWatch, termToWatchFor) {
@@ -16,7 +14,7 @@ function watchAds(urlToWatch, termToWatchFor) {
   getCurrentAdList(urlToWatch).then(function(originalAds) {
 
 
-  	console.log(findMatches('audi', originalAds));
+  	var currentMatches = findMatches('bmw', originalAds);
 
     // Check for updated every 30 seconds
     setInterval(function() {
@@ -24,11 +22,15 @@ function watchAds(urlToWatch, termToWatchFor) {
 
       // Scrap Craigslist
       getCurrentAdList(urlToWatch).then(function(updatedAds) {
+      	console.log(currentMatches);
+      	// Find keyword matches in updated ads
+      	var newMatches = findMatches('audi', updatedAds);
         // Compare
-        if (compareAds(originalAds, updatedAds)) {
+        if (compareAds(currentMatches, newMatches)) {
           // Log Changes
-          console.log('---=== CHANGED ===---');
-          originalAds = updatedAds;
+          console.log('\n\n---=== CHANGED ===---\n\n');
+
+          currentMatches = updatedAds;
         }
       });
     }, 3000);
@@ -82,6 +84,18 @@ function cancelWatchAds(delayInMilli, setIntervalToCancel) {
 }
 
 // Compares ads and return true if they have changed
-function compareAds(originalAdCache, updatedAdCache) {
-  return originalAdCache[0] !== updatedAdCache[0];
-}
+function compareAds(original, updated) { 
+  original.forEach(function(ogEl, ogI) {
+  	var matched = false;
+  	updated.forEach(function(newEl, newI){
+  		if(newEl === ogEl) {
+  			matched = true;
+  		}
+  	});
+  	if(!matched) {
+  		return true;
+  	}
+  })
+ return false;
+};
+
