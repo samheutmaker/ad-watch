@@ -5,7 +5,7 @@ const mainUrl = "https://seattle.craigslist.org/search/cta";
 
 
 // Initalize
-watchAds(mainUrl);
+watchAds(mainUrl, 'bmw');
 
 // Watch Ads and Alert on Update
 function watchAds(urlToWatch, termToWatchFor) {
@@ -14,7 +14,7 @@ function watchAds(urlToWatch, termToWatchFor) {
   getCurrentAdList(urlToWatch).then(function(originalAds) {
 
 
-  	var currentMatches = findMatches('bmw', originalAds);
+  	var currentMatches = findMatches(termToWatchFor, originalAds);
 
     // Check for updated every 30 seconds
     setInterval(function() {
@@ -22,9 +22,11 @@ function watchAds(urlToWatch, termToWatchFor) {
 
       // Scrap Craigslist
       getCurrentAdList(urlToWatch).then(function(updatedAds) {
-      	console.log(currentMatches);
+      	
       	// Find keyword matches in updated ads
-      	var newMatches = findMatches('audi', updatedAds);
+      	var newMatches = findMatches(termToWatchFor, updatedAds);
+
+      	console.log(currentMatches);
         // Compare
         if (compareAds(currentMatches, newMatches)) {
           // Log Changes
@@ -85,6 +87,7 @@ function cancelWatchAds(delayInMilli, setIntervalToCancel) {
 
 // Compares ads and return true if they have changed
 function compareAds(original, updated) { 
+
   original.forEach(function(ogEl, ogI) {
   	var matched = false;
   	updated.forEach(function(newEl, newI){
