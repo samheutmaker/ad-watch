@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/samheutmaker/ad-watch#readme",
   "dependencies": {
+    "staff": "^1.0.1",
     "x-ray": "^2.2.0"
   }
 }
